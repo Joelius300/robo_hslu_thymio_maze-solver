@@ -184,7 +184,7 @@ class MazeWalker(ThymioObserver):
             # we queried the last time because now that direction is not deemed possible anymore because we can see the
             # wall again.
             self.waiting_until_intersection_in_direction = None
-            self.current_turn = self.guide.on_detected_crossing(self.last_possible_directions)
+            self.current_turn = self.guide.on_detected_crossing(self.last_possible_directions)  # TODO since this takes the directions from the last tick, how does it behave when there is an intersection that has left and/or right open but not front? Does it see that it cannot go straight anymore or is the threshold too high currently?
             self.turn_initiation_time = time.time_ns()
             print("On intersection; ready to take a turn.")
             print(f"Chose {self.current_turn} from {{{self.last_possible_directions}}}")
