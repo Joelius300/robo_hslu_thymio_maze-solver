@@ -73,7 +73,8 @@ class MazeWalker(ThymioObserver):
       drives straight into the wall. This shouldn't be too hard to fix thought, it's just an additional case to code.
     - Currently it queries the guide on which direction it should take only when it's on the intersection, not as soon
       as it sees there is one. This shouldn't be an issue generally speaking but something to keep in mind.
-    - Currently it checks left first, right second when determining whether it's at an intersection and needs to wait
+    - [Update] Switched it to check right first, then left. Why? see below.
+      Currently it checks left first, right second when determining whether it's at an intersection and needs to wait
       until the opening disappears. Meaning that if it comes to an intersection where both left and right open at the
       same time, it will wait until the left side is back and then continue with the openings it saw just before the
       left side became visible. If the right side in this case became visible a tick before the left side was, the
@@ -152,10 +153,10 @@ class MazeWalker(ThymioObserver):
         if not self.waiting_until_intersection_in_direction:
             print("No intersection in sight.")
             # we are not waiting until we are on an intersection, check if we should be
-            if Direction.LEFT in possible_dirs:
-                self.waiting_until_intersection_in_direction = Direction.LEFT
-            elif Direction.RIGHT in possible_dirs:
+            if Direction.RIGHT in possible_dirs:
                 self.waiting_until_intersection_in_direction = Direction.RIGHT
+            elif Direction.LEFT in possible_dirs:
+                self.waiting_until_intersection_in_direction = Direction.LEFT
         elif self.waiting_until_intersection_in_direction not in possible_dirs:
             # we are waiting until we are on an intersection and just reached the middle of that intersection because
             # the opening that we were looking at earlier isn't visible anymore meaning we're currently located just
