@@ -80,32 +80,28 @@ class MazeWalker(ThymioObserver):
     """
     Current implementation:
 
-    It goes straight and corrects a bit if necessary.
-    Once it sees and opening to the left or right, it keeps moving but remembers that it saw an opening.
-    Once it doesn't see that opening anymore, it's positioned almost perfectly on the intersection.
-    It now asks the guide what direction it should take and stores that direction.
+    It goes straight and corrects a bit if necessary (and if it has accurate reference points (walls) for it).
+    Once it sees an opening to the left or right, or it sees a dead end coming up, it keeps moving but remembers that
+    it saw an opening/dead end.
+    Once it doesn't see that opening anymore, or it's standing in front of a wall, it's positioned almost perfectly on
+    the intersection (or just before the wall in the case of a dead end).
+    It now asks the guide what direction it should take and stores that direction as "current_turn". The possible
+    directions it gives to the guide, are the ones it saw when it first spotted the intersection.
     If a direction is being taken, it sets the motors to opposite speeds and uses predefined and well tested (TM)
     time durations to turn -90, 90 or 180 degrees. Once those time durations have elapsed, it sets itself to go straight
     again.
 
     Important:
-    - Currently going right works well (left should too but not tested).
-    - The implementation of going to the center of the intersection made it unreactive to dead ends because it doesn't
-      really do anything anymore until and opening is found and then closed again which of course doesn't happen when it
-      drives straight into the wall. This shouldn't be too hard to fix thought, it's just an additional case to code.
     - Currently it queries the guide on which direction it should take only when it's on the intersection, not as soon
       as it sees there is one. This shouldn't be an issue generally speaking but something to keep in mind.
-    - [Update] Switched it to check right first, then left. Why? see below.
-      Currently it checks left first, right second when determining whether it's at an intersection and needs to wait
-      until the opening disappears. Meaning that if it comes to an intersection where both left and right open at the
-      same time, it will wait until the left side is back and then continue with the openings it saw just before the
-      left side became visible. If the right side in this case became visible a tick before the left side was, the
-      algorithm will think there's no opening on the right side even though it just missed it by a tiny bit.
-      Since the right hand rule is one of the use cases, it might make more sense to switch this so right gets priority.
-      Still, changes are that this doesn't even pose an issue but I'd rather have it documented.
+    - In situations where there is an intersection with paths going left AND right, the sensors need to pick up both of
+      them at the same time otherwise it might not consider the other as possibility. Since we're using the right hand
+      rule in one of the guides, it checks right before left so in the event of collision, right is more likely to be
+      picked up correctly which is more important than correctly seeing the left opening.
     """
 
-    ninety_degree_time_ns = 2247700724 * .95  # comes from quite a bit of testing with Thymio 17
+    # comes from quite a bit of testing witThymio 17, can be adjusted slightly depending on the weather
+    ninety_degree_time_ns = 2247700724 * .95
     turn_timings = {
         Direction.LEFT: {
             "left": -100,
@@ -163,7 +159,7 @@ class MazeWalker(ThymioObserver):
 
         diff = prox_front_left - prox_front_right  # positive if left wall is closer -> correction right
 
-        # only do correction if in a corridor
+        # only do correction if in a corridor and not waiting for an intersection or dead end
         if not opening_left and not opening_right and abs(diff) > self.diff_threshold and not self.waiting_until_intersection_in_direction:
             correction = round(diff / 50)
             self._set_motors(self.base_speed + correction, self.base_speed - correction)
