@@ -75,14 +75,14 @@ def get_directions(path):
 
         #Change in Direction, example: last_direction = (0, -1)  direction = (-1, 0)
         if direction[0] != last_direction[0] and last_direction[0] == 0:
-            if direction[0] == -1 and last_direction[1] == 1:
+            if direction[0] == -1 and last_direction[1] == 1 or direction[0] == 1 and last_direction[1] == -1:
                 directions.append(Direction.RIGHT)
             else:
                 directions.append(Direction.LEFT)
 
         # Change in Direction, example: last_direction = (-1, 0)  direction = (0, -1)
         if direction[1] != last_direction[1] and last_direction[1] == 0:
-            if direction[1] == 1 and last_direction[0] == -1: # and last_direction[0] == 1
+            if direction[1] == 1 and last_direction[0] == -1 or direction[1] == -1 and last_direction[0] == 1 : # and last_direction[0] == 1
                 directions.append(Direction.LEFT)
             else:
                 directions.append(Direction.RIGHT)
@@ -157,6 +157,9 @@ if __name__=='__main__':
 
     start_node = [1, 6]
     end_node = [7, 0]
+
+    #start_node = [7, 0]
+    #end_node = [1, 6]
 
     print(start_node[0], start_node[1])
     path = get_path(maze_example2, start_node , end_node)
