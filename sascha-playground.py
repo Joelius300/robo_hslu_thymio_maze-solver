@@ -1,3 +1,4 @@
+from enum import Flag, auto
 
 from pyamaze import maze,agent,textLabel
 
@@ -5,6 +6,7 @@ from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
+from direction import Direction
 
 from queue import PriorityQueue
 
@@ -22,7 +24,7 @@ matrix_example1 = \
                 [0, 0, 1, 0, 0, 0]]
 """
 
-matrix_example1 = \
+maze_example1 = \
                 [[1, 1, 0, 0, 0, 1],
                 [1, 1, 1, 1, 1, 0],
                 [0, 0, 0, 0, 1, 0],
@@ -31,11 +33,24 @@ matrix_example1 = \
                 [1, 1, 0, 1, 1, 1],
                 [1, 1, 0, 1, 1, 1]]
 
-def GetPath(matrix):
+
+maze_example2 = \
+                [[0, 0, 0, 0, 0, 0, 0, 1, 0],
+                [0, 1, 1, 1, 1, 1, 0, 1, 0],
+                [0, 1, 0, 0, 0, 1, 0, 1, 0],
+                [0, 1, 1, 1, 1, 1, 0, 1, 0],
+                [0, 1, 0, 1, 0, 0, 0, 1, 0],
+                [0, 1, 0, 1, 1, 1, 1, 1, 0],
+                [0, 1, 0, 0, 0, 0, 0, 0,0]]
+
+
+
+
+def GetPath(matrix, start_node, end_node):
     grid = Grid(matrix=matrix)
 
-    start = grid.node(1, 6)
-    end = grid.node(0, 0)
+    start = grid.node(start_node[0], start_node[1])
+    end = grid.node(end_node[0], end_node[1])
 
     finder = AStarFinder(diagonal_movement=DiagonalMovement.never)
     path, runs = finder.find_path(start, end, grid)
@@ -47,14 +62,35 @@ def GetPath(matrix):
 
 def GetDirections(path):
 
-    current_direction = (0, 0)
+    last_direction = (path[0][0] - path[1][0], path[0][1] - path[1][1])
     last_node = path[0]
 
-    for node in path:
-        if (node != last_node):
+    directions = []
 
+    for node in path[1:]:
+        x_difference = last_node[0] - node[0]
+        y_difference = last_node[1] - node[1]
 
+        direction = (x_difference, y_difference)
 
+        #Change in Direction, example: last_direction = (0, -1)  direction = (-1, 0)
+        if direction[0] != last_direction[0] and last_direction[0] == 0:
+            if direction[0] == -1 and last_direction[1] == 1:
+                directions.append(Direction.RIGHT)
+            else:
+                directions.append(Direction.LEFT)
+
+        # Change in Direction, example: last_direction = (-1, 0)  direction = (0, -1)
+        if direction[1] != last_direction[1] and last_direction[1] == 0:
+            if direction[1] == 1 and last_direction[0] == -1: # and last_direction[0] == 1
+                directions.append(Direction.LEFT)
+            else:
+                directions.append(Direction.RIGHT)
+
+        last_direction = direction
+        last_node = node
+
+    print(directions)
 
 
 def h(cell1,cell2):
@@ -118,6 +154,11 @@ def maze_example():
 
 if __name__=='__main__':
     #maze_example()
-    path = GetPath(matrix_example1)
 
+    start_node = [1, 6]
+    end_node = [7, 0]
+
+    print(start_node[0], start_node[1])
+    path = GetPath(maze_example2, start_node , end_node)
+    GetDirections(path)
     print(path)
