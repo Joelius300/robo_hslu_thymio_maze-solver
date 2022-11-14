@@ -74,7 +74,7 @@ class MazeWalker(ThymioObserver):
 
         if self.current_turn == Direction.LEFT or self.current_turn == Direction.RIGHT or self.current_turn == Direction.U_TURN:
             print("Doing turn:", self.current_turn)
-            self.do_turn()
+            self._do_turn()
             return
 
         assert (self.current_turn == Direction.STRAIGHT)
@@ -147,8 +147,12 @@ class MazeWalker(ThymioObserver):
         else:
             # we are still waiting to get to the middle of the intersection but not there yet, so just keep on moving.
             print(f"Moving to the center of the intersection: {self.waiting_until_intersection_in_direction}")
+            updated_dir = self.last_possible_directions | possible_dirs
+            if updated_dir != self.last_possible_directions:
+                print(f"Found new direction(s): {{{possible_dirs & ~self.last_possible_directions}}} -> Possibilities now: {{{updated_dir}}}")
+                self.last_possible_directions = updated_dir
 
-    def do_turn(self):
+    def _do_turn(self):
         left, right, duration = self._get_timings(self.current_turn)
         if time.time_ns() - self.turn_initiation_time >= duration:
             self.current_turn = Direction.STRAIGHT
