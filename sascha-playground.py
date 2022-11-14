@@ -46,7 +46,7 @@ maze_example2 = \
 
 
 
-def GetPath(matrix, start_node, end_node):
+def get_path(matrix, start_node, end_node):
     grid = Grid(matrix=matrix)
 
     start = grid.node(start_node[0], start_node[1])
@@ -60,7 +60,7 @@ def GetPath(matrix, start_node, end_node):
 
     return path
 
-def GetDirections(path):
+def get_directions(path):
 
     last_direction = (path[0][0] - path[1][0], path[0][1] - path[1][1])
     last_node = path[0]
