@@ -3,6 +3,7 @@ import time
 from direction import Direction
 from guide import Guide
 from maze_walker import MazeWalker
+from ordered_instructions_guide import OrderedInstructionsGuide
 from right_hand_guide import RightHandGuide
 from thymio_python.thymiodirect import ThymioObserver, SingleSerialThymioRunner
 from thymio_python.thymiodirect.thymio_constants import PROXIMITY_FRONT_BACK, MOTOR_LEFT, MOTOR_RIGHT, BUTTON_CENTER
@@ -49,6 +50,13 @@ if __name__ == "__main__":
     # absolute minimum
     guide = GoStraightGuide()
     guide = RightHandGuide()
+    directions = [
+        Direction.RIGHT,
+        Direction.RIGHT,
+        Direction.LEFT,
+        Direction.LEFT
+    ]
+    guide = OrderedInstructionsGuide(directions)
     observer = MazeWalker(guide)
     # observer = TurnObserver()
     SingleSerialThymioRunner({BUTTON_CENTER, PROXIMITY_FRONT_BACK, MOTOR_LEFT, MOTOR_RIGHT}, observer, 0.1).run()
