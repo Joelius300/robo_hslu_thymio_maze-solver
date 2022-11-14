@@ -159,6 +159,6 @@ if __name__=='__main__':
     end_node = [7, 0]
 
     print(start_node[0], start_node[1])
-    path = GetPath(maze_example2, start_node , end_node)
-    GetDirections(path)
+    path = get_path(maze_example2, start_node , end_node)
+    get_directions(path)
     print(path)
