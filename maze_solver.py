@@ -8,6 +8,9 @@ from direction import Direction
 
 
 def get_directions(path: List[Tuple[int, int]]) -> List[Direction]:
+    """
+    Transforms a list of maze coordinates to a list of turn instructions (one per intersection).
+    """
     last_direction = (path[0][0] - path[1][0], path[0][1] - path[1][1])
     last_node = path[0]
 

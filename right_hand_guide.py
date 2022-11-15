@@ -3,6 +3,9 @@ from guide import Guide
 
 
 class RightHandGuide(Guide):
+    """
+    A Guide implementing the right hand rule (always follow the right wall).
+    """
     def on_detected_crossing(self, options: Direction) -> Direction:
         if Direction.RIGHT in options:
             return Direction.RIGHT

@@ -17,7 +17,7 @@ class MazeWalker(ThymioObserver):
     Once it doesn't see that opening anymore, or it's standing in front of a wall, it's positioned almost perfectly on
     the intersection (or just before the wall in the case of a dead end).
     It now asks the guide what direction it should take and stores that direction as "current_turn". The possible
-    directions it gives to the guide, are the ones it saw when it first spotted the intersection.
+    directions it gives to the guide, are all the ones it saw since it first spotted the intersection until now.
     If a direction is being taken, it sets the motors to opposite speeds and uses predefined and well tested (TM)
     time durations to turn -90, 90 or 180 degrees. Once those time durations have elapsed, it sets itself to go straight
     again.
@@ -25,10 +25,6 @@ class MazeWalker(ThymioObserver):
     Important:
     - Currently it queries the guide on which direction it should take only when it's on the intersection, not as soon
       as it sees there is one. This shouldn't be an issue generally speaking but something to keep in mind.
-    - In situations where there is an intersection with paths going left AND right, the sensors need to pick up both of
-      them at the same time otherwise it might not consider the other as possibility. Since we're using the right hand
-      rule in one of the guides, it checks right before left so in the event of collision, right is more likely to be
-      picked up correctly which is more important than correctly seeing the left opening.
     """
 
     # comes from quite a bit of testing with Thymio 17, can be adjusted slightly depending on the weather
@@ -65,7 +61,6 @@ class MazeWalker(ThymioObserver):
         self.opening_prox_threshold = 100  # below what value should you consider a proximity value to indicate an opening in the maze
         self.on_intersection_prox_threshold = 2000  # above what proximity value should left and right indicate that you have reached the intersection
         self.front_space_prox_threshold = 2650  # front is more sensitive so if we want to be able to drive closer to the wall we need a higher threshold
-
 
     def _update(self):
         if self.current_turn == Direction.STOP or self.th[BUTTON_CENTER]:
@@ -149,14 +144,16 @@ class MazeWalker(ThymioObserver):
             print(f"Moving to the center of the intersection: {self.waiting_until_intersection_in_direction}")
             updated_dir = self.last_possible_directions | possible_dirs
             if updated_dir != self.last_possible_directions:
-                print(f"Found new direction(s): {{{possible_dirs & ~self.last_possible_directions}}} -> Possibilities now: {{{updated_dir}}}")
+                print(f"Found new direction(s): {{{possible_dirs & ~self.last_possible_directions}}} -> "
+                      f"Possibilities now: {{{updated_dir}}}")
                 self.last_possible_directions = updated_dir
 
     def _do_turn(self):
         left, right, duration = self._get_timings(self.current_turn)
         if time.time_ns() - self.turn_initiation_time >= duration:
             self.current_turn = Direction.STRAIGHT
-            self._set_motors_straight()  # just to be a bit faster / more reactive, it would be set next iteration anyway
+            # just to be a bit faster / more reactive, it would be set next iteration anyway
+            self._set_motors_straight()
         else:
             self._set_motors(left, right)
 
