@@ -52,14 +52,15 @@ if __name__ == "__main__":
     guide = RightHandGuide()
     directions = [
         Direction.RIGHT,
-        Direction.RIGHT,
+        Direction.STRAIGHT,
         Direction.LEFT,
-        Direction.LEFT
+        Direction.RIGHT,
+        Direction.RIGHT
     ]
-    # guide = OrderedInstructionsGuide(directions)
+    guide = OrderedInstructionsGuide(directions)
     observer = MazeWalker(guide)
     # observer = TurnObserver()
-    SingleSerialThymioRunner({BUTTON_CENTER, PROXIMITY_FRONT_BACK, MOTOR_LEFT, MOTOR_RIGHT}, observer, 0.08).run()
+    SingleSerialThymioRunner({BUTTON_CENTER, PROXIMITY_FRONT_BACK}, observer, 0.1).run()
 
     # for more customized scenarios (e.g. simulated Thymio), slightly more boilerplate is required
 

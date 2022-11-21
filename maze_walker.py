@@ -28,7 +28,7 @@ class MazeWalker(ThymioObserver):
     """
 
     # comes from quite a bit of testing with Thymio 17, can be adjusted slightly depending on the weather
-    ninety_degree_time_ns = 2247700724 * .965
+    ninety_degree_time_ns = 2247700724
     turn_timings = {
         Direction.LEFT: {
             "left": -100,
@@ -56,11 +56,11 @@ class MazeWalker(ThymioObserver):
         self.last_possible_directions: Direction = None
 
         # magic values ahead
-        self.base_speed = 500
+        self.base_speed = 300
         self.diff_threshold = 75  # above what diff value should you steer to stay parallel
         self.opening_prox_threshold = 100  # below what value should you consider a proximity value to indicate an opening in the maze
-        self.on_intersection_prox_threshold = 2000  # above what proximity value should left and right indicate that you have reached the intersection
-        self.front_space_prox_threshold = 2650  # front is more sensitive so if we want to be able to drive closer to the wall we need a higher threshold
+        self.on_intersection_prox_threshold = 1500  # above what proximity value should left and right indicate that you have reached the intersection
+        self.front_space_prox_threshold = 2850  # front is more sensitive so if we want to be able to drive closer to the wall we need a higher threshold
 
     def _update(self):
         if self.current_turn == Direction.STOP or self.th[BUTTON_CENTER]:
