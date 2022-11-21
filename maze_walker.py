@@ -98,6 +98,9 @@ class MazeWalker(ThymioObserver):
         # get all possible directions we can currently see in -> potential turns
         possible_dirs = _get_directions(opening_left, opening_right, opening_front)
 
+        # NOTE: You could also store multiple directions in waiting_until... and then just OR then threshold checks
+        # together. This would enable you to wait for either left or right when you find out that both options are
+        # available (so left and right are open). You would probably append waiting_until.. when you append last_possi..
         is_on_intersection = False
         # either waiting on dead end, or we see there will be a dead end soon in which case we don't want the side
         # sensors as they hit the front wall too early so use the front center sensor
