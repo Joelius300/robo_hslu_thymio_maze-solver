@@ -1,5 +1,12 @@
 # ROBO HSLU Thymio maze solver
 
+A program to make Thymio solve a maze either by going along one wall, or by calculating the best path from a given maze-definition and then driving it.
+It's implemented with an architecture that handles intersection detection separately from the guide, which determines the directions to go. This allows the implementations of the guide to be very simple and abstract without the need to deal with any actual robot stuff.
+
+The algorithm is as follows:
+
+![process-diagram](./state-machine.svg)
+
 ## Setup
 
 1. Update the submodule with `git submodule update`.
